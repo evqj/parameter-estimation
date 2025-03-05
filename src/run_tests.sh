@@ -11,7 +11,7 @@ export PYTHONPATH="$PROJECT_ROOT:$PYTHONPATH"
 #python3 -m unittest discover -s "$PROJECT_ROOT/test" -v
 
 # Run the Python unit tests
-python3 -m unittest $PROJECT_ROOT/test/test_SimplifiedThreePL.py
+python3 -m unittest $PROJECT_ROOT/tests/test_SimplifiedThreePL.py
 
 # Check the exit status of the test run 
 #if [ $? -eq 0 ]; then
