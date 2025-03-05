@@ -6,6 +6,8 @@ from SignalDetection import SignalDetection
 from Experiment import Experiment
 from SimplifiedThreePL import SimplifiedThreePL
 
+#Credit: some tests were written and debugged using ChatGPT and Google
+
 class Test_SimplifiedThreePL(unittest.TestCase):
 
     def setUp(self):
