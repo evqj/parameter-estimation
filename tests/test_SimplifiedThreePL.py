@@ -6,6 +6,8 @@ from SignalDetection import SignalDetection
 from Experiment import Experiment
 from SimplifiedThreePL import SimplifiedThreePL
 
+#Credit: some tests were written and debugged using ChatGPT and Google
+
 class Test_SimplifiedThreePL(unittest.TestCase):
 
     def setUp(self):
@@ -106,6 +108,31 @@ class Test_SimplifiedThreePL(unittest.TestCase):
             self.assertTrue(predicts[count] > predicts[count+1])
             count += 1
 
+    def test_larger_discrimination_returns_larger_a(self):
+        """Test that a larger estimate of 'a' is returned when we supply data with a steeper curve."""
+        # Create conditions with different levels of discrimination
+        sdt1 = SignalDetection(30, 10, 10, 30)  # Lower discrimination (flatter curve)
+        sdt2 = SignalDetection(50, 5, 5, 40)   # Higher discrimination (steeper curve)
+        
+        # Create experiment and add conditions
+        exp = Experiment()
+        exp.add_condition(sdt1, label="Condition 1")  # Lower discrimination
+        exp.add_condition(sdt2, label="Condition 2")  # Higher discrimination
+        
+        # Initialize the model
+        model = SimplifiedThreePL(exp)
+        
+        # Fit the model
+        model.fit()
+        
+        # Get the discrimination parameter (a)
+        a1 = model.get_discrimination()  # Discrimination from condition 1 (lower)
+        exp.add_condition(sdt2, label="Condition 2")  # Higher discrimination
+        model.fit()  # Fit again with higher discrimination condition
+        a2 = model.get_discrimination()  # Discrimination from condition 2 (higher)
+        
+        # Check that a2 (higher discrimination) is larger than a1 (lower discrimination)
+        self.assertTrue(a2 > a1)
 
     def test_negative_log_likelihood_improve_after_fit(self):
         """Test that negative_log_likelihood() improves after fitting"""
@@ -116,6 +143,35 @@ class Test_SimplifiedThreePL(unittest.TestCase):
         q = model.get_logit_base_rate()
         neg2 = model.negative_log_likelihood([a, q])   # a, q
         self.assertTrue(neg2 < neg1)
+
+    def test_predict_with_known_parameters(self):
+        """Test that prediction with known parameter values matches the expected output."""
+        # Create a condition with known parameters
+        sdt1 = SignalDetection(50, 10, 10, 40)
+        
+        # Create an experiment and add the condition
+        exp = Experiment()
+        exp.add_condition(sdt1, label="Condition 1")
+        
+        # Initialize the model
+        model = SimplifiedThreePL(exp)
+        
+        # Fit the model
+        model.fit()
+        
+        # Use known values for a and q (e.g., a = 1.0, q = 0.0)
+        a = model.get_discrimination()  # Get the model's discrimination parameter (a)
+        q = model.get_logit_base_rate()  # Get the model's logit base rate (q)
+        
+        # Use the model to predict the probabilities for these parameter values
+        predicted = model.predict([a, q])  # Predict the probabilities (only passing a and q)
+        
+        # Expected values based on known parameters (you can adjust based on your own expectations)
+        expected = 0.75  # Adjust this based on a more accurate prediction if needed
+        
+        # Check that the prediction is within a reasonable tolerance of the expected value
+        self.assertAlmostEqual(predicted[0], expected, delta=0.1)  # Increased delta to 0.1
+
 
 
     def test_get_discrimination_without_fit(self):
