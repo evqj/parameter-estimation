@@ -1,6 +1,8 @@
 from typing import List, Tuple, Optional
 from SignalDetection import SignalDetection
 
+# Credit: Some code was written with the help of Google and ChatGPT.
+
 class Experiment:
     def __init__(self):
         """Initialize an empty experiment."""
@@ -13,7 +15,7 @@ class Experiment:
         self.labels.append(label)
         
     def sorted_roc_points(self) -> Tuple[List[float], List[float]]:
-        """Return sorted false alarm rates and corresponding hit rates."""
+        """Return sorted false alarm rates and corresponding hit rates ."""
         if not self.conditions:
             raise ValueError("No conditions available in the experiment")
             
